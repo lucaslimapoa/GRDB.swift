@@ -1,3 +1,4 @@
 [submodule "SQLiteCustom/src"]
 	path = SQLiteCustom/src
-	url = https://github.com/swiftlyfalling/SQLiteLib.git
+	url = https://github.com/lucaslimapoa/SQLiteLib.git
+	branch = lucas/sqlite-3.49.1
