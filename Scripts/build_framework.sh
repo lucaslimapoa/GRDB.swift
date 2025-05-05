@@ -1,15 +1,18 @@
 set -e
 
 COMMON_FLAGS=(
-  "archive"
-  "-configuration release"
-  "-project GRDBCustom.xcodeproj"
-  "-scheme GRDBCustom"
+  archive
+  -configuration
+  release
+  -project
+  GRDBCustom.xcodeproj
+  -scheme
+  GRDBCustom
 )
 
-SDKS=(
-  "iphoneos"
-  "iphonesimulator"
+DESTINATIONS=(
+  "generic/platform=iOS"
+  "generic/platform=iOS Simulator"
 )
 
 rm -rf GRDB.xcframework.zip GRDB.xcframework *.xcarchive
@@ -17,25 +20,28 @@ rm -rf GRDB.xcframework.zip GRDB.xcframework *.xcarchive
 make SQLiteCustom
 
 FRAMEWORKS=()
-for SDK in "${SDKS[@]}"; do
-  echo "Running xcodebuild -sdk ${SDK} ${COMMON_FLAGS[@]} -archivePath GRDB-${SDK}.xcarchive"
+INDEX=0
+for DEST in "${DESTINATIONS[@]}"; do
+  ARCHIVE_NAME="GRDB-${INDEX}.xcarchive"
+  echo "Running xcodebuild ${COMMON_FLAGS[*]} -destination '${DEST}' -archivePath ${ARCHIVE_NAME}"
 
   xcodebuild \
-    -sdk ${SDK} \
-    ${COMMON_FLAGS[@]} \
-    -archivePath GRDB-${SDK}.xcarchive \
+    "${COMMON_FLAGS[@]}" \
+    -destination "${DEST}" \
+    -archivePath "${ARCHIVE_NAME}" \
     BUILD_LIBRARY_FOR_DISTRIBUTION=YES \
     SKIP_INSTALL=NO
 
   FRAMEWORKS+=(
-    "-framework" "GRDB-${SDK}.xcarchive/Products/Library/Frameworks/GRDB.framework"
-    "-debug-symbols" "$(pwd)/GRDB-${SDK}.xcarchive/dSYMs/GRDB.framework.dSYM"
+    "-framework" "${ARCHIVE_NAME}/Products/Library/Frameworks/GRDB.framework"
+    "-debug-symbols" "$(pwd)/${ARCHIVE_NAME}/dSYMs/GRDB.framework.dSYM"
   )
+  ((INDEX++))
 done
 
-xcodebuild -create-xcframework -output GRDB.xcframework ${FRAMEWORKS[@]}
+xcodebuild -create-xcframework -output GRDB.xcframework "${FRAMEWORKS[@]}"
 
 zip -r GRDB.xcframework.zip GRDB.xcframework
-rm -rf ${ARCHIVES[@]} GRDB.xcframework
+rm -rf GRDB.xcframework *.xcarchive
 
-sha256sum GRDB.xcframework.zip
+shasum -a 256 GRDB.xcframework.zip
