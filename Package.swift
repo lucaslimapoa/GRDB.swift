@@ -9,7 +9,6 @@ var swiftSettings: [SwiftSetting] = [
     .define("SQLITE_ENABLE_PREUPDATE_HOOK"),
     .define("SQLITE_ENABLE_SNAPSHOT"),
     .define("SQLITE_ENABLE_JSON1"),
-    .define("SQLITE_ENABLE_JSONB"),
 ]
 var cSettings: [CSetting] = [
     .define("GRDB_SQLITE_ENABLE_PREUPDATE_HOOK"),
