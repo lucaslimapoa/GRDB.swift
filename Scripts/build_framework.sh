@@ -44,4 +44,4 @@ xcodebuild -create-xcframework -output GRDB.xcframework "${FRAMEWORKS[@]}"
 zip -r GRDB.xcframework.zip GRDB.xcframework
 rm -rf GRDB.xcframework *.xcarchive
 
-shasum -a 256 GRDB.xcframework.zip
+shasum -a 256 GRDB.xcframework.zip > GRDB.xcframework.zip.sha256
