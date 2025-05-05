@@ -6,8 +6,14 @@ import PackageDescription
 
 var swiftSettings: [SwiftSetting] = [
     .define("SQLITE_ENABLE_FTS5"),
+    .define("SQLITE_ENABLE_PREUPDATE_HOOK"),
+    .define("SQLITE_ENABLE_SNAPSHOT"),
+    .define("SQLITE_ENABLE_JSON1"),
+    .define("SQLITE_ENABLE_JSONB"),
 ]
-var cSettings: [CSetting] = []
+var cSettings: [CSetting] = [
+    .define("GRDB_SQLITE_ENABLE_PREUPDATE_HOOK"),
+]
 var dependencies: [PackageDescription.Package.Dependency] = []
 
 // Don't rely on those environment variables. They are ONLY testing conveniences:
