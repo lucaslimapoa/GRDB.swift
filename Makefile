@@ -50,10 +50,10 @@ OTHER_SWIFT_FLAGS = '$$(inherited) -D SQLITE_ENABLE_FTS5 -D SQLITE_ENABLE_PREUPD
 GCC_PREPROCESSOR_DEFINITIONS = '$$(inherited) GRDB_SQLITE_ENABLE_PREUPDATE_HOOK=1'
 
 # Extract min and max destinations from the available devices
-MIN_IOS_DESTINATION := $(shell xcrun simctl list -j devices available | Scripts/destination.rb | grep iPhone | grep -v ^13\.7 | sort -n | head -1 | cut -wf 3 | sed 's/\(.*\)/"platform=iOS Simulator,id=\1"/')
-MAX_IOS_DESTINATION := $(shell xcrun simctl list -j devices available | Scripts/destination.rb | grep iPhone | grep -v ^13\.7 | sort -rn | head -1 | cut -wf 3 | sed 's/\(.*\)/"platform=iOS Simulator,id=\1"/')
-MIN_TVOS_DESTINATION := $(shell xcrun simctl list -j devices available | Scripts/destination.rb | grep tvOS | sort -n | head -1 | cut -wf 3 | sed 's/\(.*\)/"platform=tvOS Simulator,id=\1"/')
-MAX_TVOS_DESTINATION := $(shell xcrun simctl list -j devices available | Scripts/destination.rb | grep tvOS | sort -rn | head -1 | cut -wf 3 | sed 's/\(.*\)/"platform=tvOS Simulator,id=\1"/')
+MIN_IOS_DESTINATION := $(shell xcrun simctl list -j devices available | Scripts/destination.rb | grep iPhone | grep -v ^13\.7 | sort -n | head -1 | cut -d' ' -f3 | sed 's/\(.*\)/"platform=iOS Simulator,id=\1"/')
+MAX_IOS_DESTINATION := $(shell xcrun simctl list -j devices available | Scripts/destination.rb | grep iPhone | grep -v ^13\.7 | sort -rn | head -1 | cut -d' ' -f3 | sed 's/\(.*\)/"platform=iOS Simulator,id=\1"/')
+MIN_TVOS_DESTINATION := $(shell xcrun simctl list -j devices available | Scripts/destination.rb | grep tvOS | sort -n | head -1 | cut -d' ' -f3 | sed 's/\(.*\)/"platform=tvOS Simulator,id=\1"/')
+MAX_TVOS_DESTINATION := $(shell xcrun simctl list -j devices available | Scripts/destination.rb | grep tvOS | sort -rn | head -1 | cut -d' ' -f3 | sed 's/\(.*\)/"platform=tvOS Simulator,id=\1"/')
 
   # If xcbeautify or xcpretty is available, use it for xcodebuild output, except in CI.
 XCPRETTY =
@@ -398,10 +398,13 @@ SQLiteCustom: SQLiteCustom/src/sqlite3.h
 	echo '#define SQLITE_ENABLE_PREUPDATE_HOOK' >> SQLiteCustom/GRDBCustomSQLite-USER.h
 	echo '#define SQLITE_ENABLE_FTS5' >> SQLiteCustom/GRDBCustomSQLite-USER.h
 	echo '#define SQLITE_ENABLE_SNAPSHOT' >> SQLiteCustom/GRDBCustomSQLite-USER.h
+	echo '#define SQLITE_ENABLE_JSON1' >> SQLiteCustom/GRDBCustomSQLite-USER.h
+	
 	echo '// Makefile generated' > SQLiteCustom/GRDBCustomSQLite-USER.xcconfig
-	echo 'CUSTOM_OTHER_SWIFT_FLAGS = -D SQLITE_ENABLE_PREUPDATE_HOOK -D SQLITE_ENABLE_FTS5 -D SQLITE_ENABLE_SNAPSHOT' >> SQLiteCustom/GRDBCustomSQLite-USER.xcconfig
+	echo 'CUSTOM_OTHER_SWIFT_FLAGS = -DSQLITE_ENABLE_PREUPDATE_HOOK -DSQLITE_ENABLE_FTS5 -DSQLITE_ENABLE_SNAPSHOT -DSQLITE_ENABLE_JSON1' >> SQLiteCustom/GRDBCustomSQLite-USER.xcconfig
+	
 	echo '// Makefile generated' > SQLiteCustom/src/SQLiteLib-USER.xcconfig
-	echo 'CUSTOM_SQLLIBRARY_CFLAGS = -DSQLITE_ENABLE_PREUPDATE_HOOK -DSQLITE_ENABLE_FTS5 -DSQLITE_ENABLE_SNAPSHOT' >> SQLiteCustom/src/SQLiteLib-USER.xcconfig
+	echo 'CUSTOM_SQLLIBRARY_CFLAGS = -DSQLITE_ENABLE_PREUPDATE_HOOK -DSQLITE_ENABLE_FTS5 -DSQLITE_ENABLE_SNAPSHOT -DSQLITE_ENABLE_JSON1' >> SQLiteCustom/src/SQLiteLib-USER.xcconfig
 
 # Makes sure the SQLiteCustom/src submodule has been downloaded
 SQLiteCustom/src/sqlite3.h:
